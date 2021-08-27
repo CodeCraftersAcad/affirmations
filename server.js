@@ -20,6 +20,7 @@ app.get("/test", (req, res) => {
 
 // use routes
 app.use('/quotes', require('./routes/quote-routes'));
+app.use('/news', require('./routes/news-routes'));
 
 // express port listener
 app.listen(PORT, () => console.log(`http://localhost:${PORT}`));
