@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const connectDB = async () => {
     const conn = mongoose.connect(
-        process.env.MONGO_URL || 'mongodb://localhost:27017/affirmations', {
+        'mongodb://localhost:27017/affirmations' || process.env.MONGO_URL, {
         useCreateIndex: true,
         useFindAndModify: true,
         useNewUrlParser: true,
