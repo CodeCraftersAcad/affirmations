@@ -1,5 +1,5 @@
 const NewsAPI = require('newsapi'),
-    newsapi = new NewsAPI('3ca1264b13ab4860bc75b0c7228f3e24');
+    newsapi = new NewsAPI(process.env.NEWS_API_KEY);
 const articles = async () => {
     const results = await newsapi.v2.everything({
             sources: 'abc-news, axios, fox-news, google-news, medical-news-today',
