@@ -49,20 +49,33 @@ exports.putUpdateQuoteById = async (req, res) => {
     const { quoteId } = req.params;
     const { author, text, category } = req.body;
     try {
-        await Quote.findOne({ _id: quoteId }, async (err, quote) => {
-            if (!quote) return res.status(404).json({ msg: `A quote with that ID doesn't exist` });
-            else {
-                quote.author = author || quote.author;
-                quote.text = text || quote.text;
-                quote.category = category || quote.category;
-                await quote.save();
-                return res.status(201).json({ msg: 'Quote updated', quote });
-            }
-        });
+        const updatedQuote = await Quote.findOneAndUpdate(
+            { _id: quoteId },
+            {author, text, category});
+        return res.status(201).json({ msg: 'Quote updated', updatedQuote });
     } catch (err) {
-        console.log(err);
+        console.log(err)
     }
 }
+
+// exports.putUpdateQuoteById = async (req, res) => {
+//     const { quoteId } = req.params;
+//     const { author, text, category } = req.body;
+//     try {
+//         await Quote.findOne({ _id: quoteId }, async (err, quote) => {
+//             if (!quote) return res.status(404).json({ msg: `A quote with that ID doesn't exist` });
+//             else {
+//                 quote.author = author || quote.author;
+//                 quote.text = text || quote.text;
+//                 quote.category = category || quote.category;
+//                 await quote.save();
+//                 return res.status(201).json({ msg: 'Quote updated', quote });
+//             }
+//         });
+//     } catch (err) {
+//         console.log(err);
+//     }
+// }
 
 exports.deleteQuoteById = async (req, res) => {
     const { quoteId } = req.params;
