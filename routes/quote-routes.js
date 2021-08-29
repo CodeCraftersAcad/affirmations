@@ -1,8 +1,15 @@
 const router = require('express').Router(),
-    {getAllQuotes} = require('../controllers/quote-controllers');
+    {getAllQuotes, getQuoteById, postAddNewQuote, putUpdateQuoteById, deleteQuoteById} = require('../controllers/quote-controllers');
 
 router
     .route('/')
-    .get(getAllQuotes);
+    .get(getAllQuotes)
+    .post(postAddNewQuote);
+
+router
+    .route('/:quoteId')
+    .get(getQuoteById)
+    .put(putUpdateQuoteById)
+    .delete(deleteQuoteById);
 
 module.exports = router;
