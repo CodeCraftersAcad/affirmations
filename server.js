@@ -6,13 +6,14 @@ const express = require('express'),
     cors = require('cors'),
     morgan = require('morgan'),
     PORT = process.env.PORT || 3001,
-    connectDB = require('./config/db');
+    connectDB = require('./config/db'),
+    env = app.get('env');
 
 // connect to DB
-connectDB();
+connectDB(env);
 
 // route logging
-app.use(morgan('common'));
+app.use(morgan('dev'));
 
 // express middleware
 app.use(cors());
@@ -27,6 +28,7 @@ app.get("/test", (req, res) => {
 // use routes
 app.use('/quotes', require('./routes/quote-routes'));
 app.use('/news', require('./routes/news-routes'));
+app.use('/user', require('./routes/auth/register'))
 
 // express port listener
 app.listen(PORT, () => console.log(`http://localhost:${PORT}`));
