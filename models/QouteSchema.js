@@ -1,13 +1,13 @@
 const mongoose = require('mongoose');
 
-const QouteSchema = new mongoose.Schema({
+const QuoteSchema = new mongoose.Schema({
     author: {
         type: String,
-        required: "Author name required"
+        required: [false, "Author name required"]
     },
     text: {
         type: String,
-        required: "Quote text required"
+        required: [false, "Quote text required"]
     },
     category: {
         type: String
@@ -17,4 +17,4 @@ const QouteSchema = new mongoose.Schema({
     }
 }, { timestamps: true });
 
-module.exports = mongoose.model("Quote", QouteSchema);
+module.exports = mongoose.model("Quote", QuoteSchema);
