@@ -22,7 +22,7 @@ exports.registerUser = async (req, res) => {
             if (membership.confirmSubscription) {
                 let processCard = await processCreditCardInfo(card, name, address)
 
-                if (processCard) {
+                if (processCard.paymentProcess) {
                     membership.membershipStartDate = moment();
 
                     switch (membership.paymentFrequency) {
