@@ -18,17 +18,23 @@ exports.registerUser = async (req, res) => {
 
         // If member decides to sign up during registration process credit
         if (membership.membershipType !== 'basic') {
-            let processCard = await processCreditCardInfo(card, name, address)
-            if (processCard) {
-                membership.membershipStartDate = moment();
 
-                switch (membership.paymentFrequency) {
-                    case 'monthly':
-                        membership.membershipEndDate = moment(membership.membershipStartDate).add(1, 'M')
-                        break;
-                    case 'yearly':
-                        membership.membershipEndDate = moment(membership.membershipStartDate).add(1, 'year');
-                        break;
+            if (membership.confirmSubscription) {
+                let processCard = await processCreditCardInfo(card, name, address)
+
+                if (processCard) {
+                    membership.membershipStartDate = moment();
+
+                    switch (membership.paymentFrequency) {
+                        case 'monthly':
+                            membership.membershipEndDate = moment(membership.membershipStartDate).add(1, 'M')
+                            break;
+                        case 'yearly':
+                            membership.membershipEndDate = moment(membership.membershipStartDate).add(1, 'year');
+                            break;
+                    }
+                } else {
+                    return res.status(500).json({msg: 'Something went wrong'})
                 }
             }
         }
@@ -61,6 +67,4 @@ exports.registerUser = async (req, res) => {
     } catch (err) {
         console.log(err)
     }
-
-
 }
