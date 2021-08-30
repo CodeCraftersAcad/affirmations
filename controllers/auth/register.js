@@ -1,6 +1,6 @@
 const User = require('../../models/UserSchema'),
     {genJWTToken} = require('../../utils/genJWT'),
-    pageInfo = require('../../utils/constatns')
+    pageInfo = require('../../utils/constatns');
 
 exports.registerUser = async (req, res) => {
     const {name, username, email, dob, avatar, membershipType, notifications, password} = req.body;
