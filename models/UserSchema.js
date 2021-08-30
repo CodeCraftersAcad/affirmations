@@ -28,9 +28,39 @@ const UserSchema = new mongoose.Schema({
         required: false,
         default: 'https://res.cloudinary.com/purity-cottage/image/upload/v1620865447/PCSv4/user_kfjvu4.png'
     },
-    membershipType: {
-        type: String,
-        enum: ['basic', 'premium', 'admin']
+    membership: {
+        membershipType: {
+            type: String,
+            required: false,
+            default: 'basic',
+            enum: ['basic', 'premium', 'admin']
+        },
+        paymentFrequency: {
+            type: String,
+            default: 'monthly',
+            enum: ['monthly', 'yearly']
+        },
+        membershipStartDate: {
+            type: String
+        },
+        membershipEndDate: {
+            type: String
+        },
+        membershipNotifyCancel: {
+            type: Boolean,
+            default: false,
+            required: false
+        },
+        confirmSubscription: {
+            type: Boolean,
+            required: false,
+            default: false
+        },
+        membershipValidation: {
+            type: Boolean,
+            required: true,
+            default: true
+        }
     },
     favoriteQuotes: {
         type: [],
