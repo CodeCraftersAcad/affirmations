@@ -7,7 +7,8 @@ const QuoteSchema = new mongoose.Schema({
     },
     text: {
         type: String,
-        required: [false, "Quote text required"]
+        required: [false, "Quote text required"],
+        unique: true,
     },
     category: {
         type: String
@@ -15,6 +16,10 @@ const QuoteSchema = new mongoose.Schema({
     likes: {
         type: Number,
         default: 0
+    },
+    visibility: {
+        type: Boolean,
+        default: false
     }
 }, { timestamps: true });
 

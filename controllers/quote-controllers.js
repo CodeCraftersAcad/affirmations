@@ -4,11 +4,12 @@ const axios = require('axios'),
 exports.getAllQuotes = async (req, res) => {
     try {
         const result = await axios.get('https://type.fit/api/quotes');
+        const quotesInDB = await Quote.find();
         return res
             .status(200)
             .json({
                 msg: "Found Quotes",
-                quotes: result.data
+                quotes: [...quotesInDB,...result.data]
             });
     } catch (err) {
         return res
@@ -22,12 +23,17 @@ exports.getAllQuotes = async (req, res) => {
 exports.postAddNewQuote = async (req, res) => {
     const {author, text, category} = req.body;
     try {
-        const newQuote = await Quote.create({
-            author: author || "Unknown",
-            text: text,
-            category
-        });
-        return res.status(201).json({msg: 'Quote created', newQuote});
+        const existingQuote = await Quote.find({ "text": { $regex: text, $options: "ig" } });
+        if (existingQuote.length === 0) {   
+            const newQuote = await Quote.create({
+                author: author || "Unknown",
+                text: text,
+                category
+            });
+            return res.status(201).json({msg: 'Quote created', newQuote});
+        } else {
+            return res.status(500).json({ msg: 'A quote with that text already exists', existingQuote });
+        }
     } catch (err) {
         console.log(err);
     }
@@ -48,10 +54,10 @@ exports.getQuoteById = async (req, res) => {
 exports.putUpdateQuoteById = async (req, res) => {
     try {
         const {quoteId} = req.params;
-        const {author, text, category} = req.body;
+        const {author, text, category, visibility} = req.body;
         const updatedQuote = await Quote.findOneAndUpdate(
             {_id: quoteId},
-            {author, text, category},
+            {author, text, category, visibility},
             {returnOriginal: false}
         );
         return res.status(201).json({msg: 'Quote updated', updatedQuote});
