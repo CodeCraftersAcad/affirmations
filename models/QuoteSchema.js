@@ -7,7 +7,8 @@ const QuoteSchema = new mongoose.Schema({
     },
     text: {
         type: String,
-        required: [false, "Quote text required"]
+        required: [false, "Quote text required"],
+        unique: true,
     },
     category: {
         type: String
