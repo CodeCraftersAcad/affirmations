@@ -1,6 +1,6 @@
 const User = require('../../models/UserSchema'),
     {genJWTToken} = require('../../utils/genJWT'),
-    pageInfo = require('../../utils/constatns');
+    pageInfo = require('../../utils/constatns'),
 
 {sendSignupMessages} = require('../../email/messages')
 
