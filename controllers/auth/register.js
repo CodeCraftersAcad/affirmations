@@ -1,5 +1,7 @@
 const User = require('../../models/UserSchema'),
-    {genJWTToken} = require('../../utils/genJWT');
+    {genJWTToken} = require('../../utils/genJWT'),
+{sendSignupMessages} = require('../../email/messages')
+
 
 exports.registerUser = async (req, res) => {
     const {name, username, email, dob, avatar, membershipType, notifications, password} = req.body;
@@ -23,6 +25,7 @@ exports.registerUser = async (req, res) => {
             password
         })
         await newUser.save()
+        await sendSignupMessages(newUser)
 
         if (newUser) {
             res.status(201).json({
@@ -34,6 +37,7 @@ exports.registerUser = async (req, res) => {
                 avatar: newUser.avatar
             })
         }
+
     } catch (err) {
         console.log(err)
     }
