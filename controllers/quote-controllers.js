@@ -1,5 +1,6 @@
 const axios = require('axios'),
-    Quote = require('../models/QuoteSchema');
+    Quote = require('../models/QuoteSchema'),
+    pageInfo = require('../utils/constatns');
 
 exports.getAllQuotes = async (req, res) => {
     try {
@@ -8,14 +9,14 @@ exports.getAllQuotes = async (req, res) => {
         return res
             .status(200)
             .json({
-                msg: "Found Quotes",
+                msg: pageInfo.quotes.QUOTES_FOUND,
                 quotes: [...quotesInDB,...result.data]
             });
     } catch (err) {
         return res
             .status(500)
             .json({
-                msg: " Something went wrong"
+                msg: pageInfo.error.SOMETHING_WENT_WRONG
             })
     }
 }
@@ -30,9 +31,9 @@ exports.postAddNewQuote = async (req, res) => {
                 text: text,
                 category
             });
-            return res.status(201).json({msg: 'Quote created', newQuote});
+            return res.status(201).json({msg: pageInfo.quotes.QUOTE_CREATED, newQuote});
         } else {
-            return res.status(500).json({ msg: 'A quote with that text already exists', existingQuote });
+            return res.status(500).json({ msg: pageInfo.quotes.QUOTE_EXISTS, existingQuote });
         }
     } catch (err) {
         console.log(err);
@@ -44,8 +45,8 @@ exports.getQuoteById = async (req, res) => {
     const {quoteId} = req.params;
     try {
         const quote = await Quote.findOne({_id: quoteId});
-        if (!quote) return res.status(404).json({msg: 'Quote not found'});
-        else return res.status(200).json({msg: 'Found quote', quote});
+        if (!quote) return res.status(404).json({msg: pageInfo.quotes.QUOTE_NOT_FOUND});
+        else return res.status(200).json({msg: pageInfo.quotes.QUOTES_FOUND, quote});
     } catch (err) {
         console.log(err);
     }
@@ -60,7 +61,7 @@ exports.putUpdateQuoteById = async (req, res) => {
             {author, text, category, visibility},
             {returnOriginal: false}
         );
-        return res.status(201).json({msg: 'Quote updated', updatedQuote});
+        return res.status(201).json({msg: pageInfo.quotes.QUOTE_UPDATED, updatedQuote});
     } catch (err) {
         console.log(err)
     }
@@ -70,7 +71,7 @@ exports.deleteQuoteById = async (req, res) => {
     const {quoteId} = req.params;
     try {
         await Quote.findByIdAndDelete(quoteId);
-        return res.status(200).json({msg: 'Quote deleted'});
+        return res.status(200).json({msg: pageInfo.quotes.QUOTE_DELETED});
     } catch (err) {
         console.log(err);
     }

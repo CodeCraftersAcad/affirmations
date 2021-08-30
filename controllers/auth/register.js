@@ -1,6 +1,9 @@
 const User = require('../../models/UserSchema'),
     {genJWTToken} = require('../../utils/genJWT'),
+    pageInfo = require('../../utils/constatns');
+
 {sendSignupMessages} = require('../../email/messages')
+
 
 
 exports.registerUser = async (req, res) => {
@@ -9,10 +12,10 @@ exports.registerUser = async (req, res) => {
     try {
         // Check for existing user
         let existingUser = await User.findOne({email});
-        if (existingUser) return res.status(400).json({msg: 'A user already exist with this email'});
+        if (existingUser) return res.status(400).json({msg: pageInfo.user.USER_ALREADY_EXISTS});
 
         // Check password length
-        if (password.length < 6 || password.length > 20) return res.status(400).json({msg: 'Password must be between 6 and 20 characters'})
+        if (password.length < 6 || password.length > 20) return res.status(400).json({msg: pageInfo.user.PASSWORD_ERROR})
 
         const newUser = await User.create({
             name,
@@ -39,7 +42,7 @@ exports.registerUser = async (req, res) => {
         }
 
     } catch (err) {
-        console.log(err)
+        console.log(pageInfo.error.SOMETHING_WENT_WRONG)
     }
 
 

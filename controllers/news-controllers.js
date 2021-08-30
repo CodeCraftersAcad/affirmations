@@ -1,4 +1,6 @@
-const articles = require('../utils/news-service');
+const articles = require('../utils/news-service'),
+    pageInfo = require('../utils/constatns');
+
 
 exports.getAllNews = async (req, res) => {
     try {
@@ -6,12 +8,12 @@ exports.getAllNews = async (req, res) => {
         return res
             .status(200)
             .json({
-                msg: "Found Articles",
+                msg: pageInfo.articles.ARTICLES_FOUND,
                 articles: news
             });
     } catch (err) {
         return res
             .status(500)
-            .json({ msg: "Can't find articles" });
+            .json({ msg: pageInfo.articles.ARTICLES_FOUND });
     }
 }
