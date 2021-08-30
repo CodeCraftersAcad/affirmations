@@ -54,10 +54,10 @@ exports.getQuoteById = async (req, res) => {
 exports.putUpdateQuoteById = async (req, res) => {
     try {
         const {quoteId} = req.params;
-        const {author, text, category} = req.body;
+        const {author, text, category, visibility} = req.body;
         const updatedQuote = await Quote.findOneAndUpdate(
             {_id: quoteId},
-            {author, text, category},
+            {author, text, category, visibility},
             {returnOriginal: false}
         );
         return res.status(201).json({msg: 'Quote updated', updatedQuote});

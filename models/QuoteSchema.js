@@ -16,6 +16,10 @@ const QuoteSchema = new mongoose.Schema({
     likes: {
         type: Number,
         default: 0
+    },
+    visibility: {
+        type: Boolean,
+        default: false
     }
 }, { timestamps: true });
 
