@@ -1,5 +1,6 @@
 const User = require('../../models/UserSchema'),
-    {genJWTToken} = require('../../utils/genJWT');
+    {genJWTToken} = require('../../utils/genJWT'),
+    pageInfo = require('../../utils/constatns')
 
 exports.registerUser = async (req, res) => {
     const {name, username, email, dob, avatar, membershipType, notifications, password} = req.body;
@@ -7,10 +8,10 @@ exports.registerUser = async (req, res) => {
     try {
         // Check for existing user
         let existingUser = await User.findOne({email});
-        if (existingUser) return res.status(400).json({msg: 'A user already exist with this email'});
+        if (existingUser) return res.status(400).json({msg: pageInfo.user.USER_ALREADY_EXISTS});
 
         // Check password length
-        if (password.length < 6 || password.length > 20) return res.status(400).json({msg: 'Password must be between 6 and 20 characters'})
+        if (password.length < 6 || password.length > 20) return res.status(400).json({msg: pageInfo.user.PASSWORD_ERROR})
 
         const newUser = await User.create({
             name,
