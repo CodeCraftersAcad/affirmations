@@ -36,7 +36,7 @@ exports.registerUser = async (req, res) => {
             })
         }
     } catch (err) {
-        console.log(err)
+        console.log(pageInfo.error.SOMETHING_WENT_WRONG)
     }
 
 
