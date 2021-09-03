@@ -1,7 +1,9 @@
 const User = require('../../models/UserSchema'),
     {genJWTToken} = require('../../utils/genJWT'),
     {processCreditCardInfo} = require('../../utils/Payment/payment'),
-    moment = require('moment');
+    moment = require('moment'),
+    pageInfo = require('../../utils/constatns'),
+{sendSignupMessages} = require('../../email/messages');
 
 exports.registerUser = async (req, res) => {
     if (req.method !== 'POST') return res.status(400).json({msg: 'Invalid request'})
@@ -11,10 +13,10 @@ exports.registerUser = async (req, res) => {
     try {
         // Check for existing user
         let existingUser = await User.findOne({email});
-        if (existingUser) return res.status(400).json({msg: 'A user already exist with this email'});
+        if (existingUser) return res.status(400).json({msg: pageInfo.user.USER_ALREADY_EXISTS});
 
         // Check password length
-        if (password.length < 6 || password.length > 20) return res.status(400).json({msg: 'Password must be between 6 and 20 characters'})
+        if (password.length < 6 || password.length > 20) return res.status(400).json({msg: pageInfo.user.PASSWORD_ERROR})
 
         // If member decides to sign up during registration process credit
         if (membership.membershipType !== 'basic') {
@@ -51,6 +53,7 @@ exports.registerUser = async (req, res) => {
             password
         })
         await newUser.save()
+        await sendSignupMessages(newUser)
 
         // Send back user information
         if (newUser) {
@@ -65,6 +68,6 @@ exports.registerUser = async (req, res) => {
         }
 
     } catch (err) {
-        console.log(err)
+        console.log(pageInfo.error.SOMETHING_WENT_WRONG)
     }
 }
