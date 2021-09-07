@@ -2,24 +2,24 @@ const User = require('../../models/UserSchema'),
     {genJWTToken} = require('../../utils/genJWT'),
     {processCreditCardInfo} = require('../../utils/Payment/payment'),
     moment = require('moment'),
-    pageInfo = require('../../utils/constatns'),
+    serverInfo = require('../../utils/constants'),
 {sendSignupMessages} = require('../../email/messages');
 
 exports.registerUser = async (req, res) => {
-    if (req.method !== 'POST') return res.status(400).json({msg: 'Invalid request'})
+    if (req.method !== serverInfo.route.METHOD_POST) return res.status(400).json({msg: serverInfo.error.INVALID_REQUEST})
 
     const {name, address, username, email, dob, avatar, membership, notifications, password, card} = req.body;
 
     try {
         // Check for existing user
         let existingUser = await User.findOne({email});
-        if (existingUser) return res.status(400).json({msg: pageInfo.user.USER_ALREADY_EXISTS});
+        if (existingUser) return res.status(400).json({msg: serverInfo.user.USER_ALREADY_EXISTS});
 
         // Check password length
-        if (password.length < 6 || password.length > 20) return res.status(400).json({msg: pageInfo.user.PASSWORD_ERROR})
+        if (password.length < 6 || password.length > 20) return res.status(400).json({msg: serverInfo.user.PASSWORD_ERROR})
 
         // If member decides to sign up during registration process credit
-        if (membership.membershipType !== 'basic') {
+        if (membership.membershipType !== serverInfo.membership.BASIC_MEMBERSHIP) {
 
             if (membership.confirmSubscription) {
                 let processCard = await processCreditCardInfo(card, name, address)
@@ -28,15 +28,15 @@ exports.registerUser = async (req, res) => {
                     membership.membershipStartDate = moment();
 
                     switch (membership.paymentFrequency) {
-                        case 'monthly':
-                            membership.membershipEndDate = moment(membership.membershipStartDate).add(1, 'M')
+                        case serverInfo.membership.MEMBERSHIP_LENGTH_MONTH:
+                            membership.membershipEndDate = moment(membership.membershipStartDate).add(1, serverInfo.membership.MEMBERSHIP_LENGTH_MONTH)
                             break;
-                        case 'yearly':
-                            membership.membershipEndDate = moment(membership.membershipStartDate).add(1, 'year');
+                        case serverInfo.membership.MEMBERSHIP_LENGTH_YEAR:
+                            membership.membershipEndDate = moment(membership.membershipStartDate).add(1, serverInfo.membership.MEMBERSHIP_LENGTH_YEAR);
                             break;
                     }
                 } else {
-                    return res.status(500).json({msg: 'Something went wrong'})
+                    return res.status(500).json({msg: serverInfo.error.SERVER_ERROR})
                 }
             }
         }
@@ -57,17 +57,19 @@ exports.registerUser = async (req, res) => {
 
         // Send back user information
         if (newUser) {
+
             res.status(201).json({
                 _id: newUser._id,
                 name: newUser.name,
                 email: newUser.email,
-                membershipType: newUser.membershipType,
+                membershipType: newUser.membership.membershipType,
                 token: genJWTToken(newUser._id),
-                avatar: newUser.avatar
+                avatar: newUser.avatar,
+                membership: newUser.membership
             })
         }
 
     } catch (err) {
-        console.log(pageInfo.error.SOMETHING_WENT_WRONG)
+        console.log(serverInfo.error.SERVER_ERROR)
     }
 }

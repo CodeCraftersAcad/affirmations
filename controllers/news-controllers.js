@@ -1,5 +1,5 @@
 const articles = require('../utils/news-service'),
-    pageInfo = require('../utils/constatns');
+    serverInfo = require('../utils/constants');
 
 
 exports.getAllNews = async (req, res) => {
@@ -8,12 +8,12 @@ exports.getAllNews = async (req, res) => {
         return res
             .status(200)
             .json({
-                msg: pageInfo.articles.ARTICLES_FOUND,
+                msg: serverInfo.articles.ARTICLES_FOUND,
                 articles: news
             });
     } catch (err) {
         return res
             .status(500)
-            .json({ msg: pageInfo.articles.ARTICLES_FOUND });
+            .json({ msg: serverInfo.articles.ARTICLES_FOUND });
     }
 }

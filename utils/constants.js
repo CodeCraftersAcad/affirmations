@@ -1,6 +1,7 @@
 module.exports = {
     error: {
-        SOMETHING_WENT_WRONG: 'Something went wrong'
+        SERVER_ERROR: 'Something went wrong',
+        INVALID_REQUEST: 'Invalid Request'
     },
     quotes: {
         QUOTES_FOUND: 'Quotes found',
@@ -17,6 +18,19 @@ module.exports = {
     user: {
         USER_ALREADY_EXISTS: 'A user already exist with this email',
         PASSWORD_ERROR: 'Password must be between 6 and 20 characters'
+    },
+    membership: {
+        BASIC_MEMBERSHIP: 'basic',
+        PREMIUM_MEMBERSHIP: 'premium',
+        MEMBERSHIP_LENGTH_MONTH: 'month',
+        MEMBERSHIP_LENGTH_YEAR: 'year'
+    },
+    route: {
+        METHOD_GET: 'GET',
+        METHOD_POST: 'POST',
+        METHOD_PUT: 'PUT',
+        METHOD_DELETE: 'DELETE',
+
     }
 
 }

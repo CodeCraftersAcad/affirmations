@@ -37,8 +37,8 @@ const UserSchema = new mongoose.Schema({
         },
         paymentFrequency: {
             type: String,
-            default: 'monthly',
-            enum: ['monthly', 'yearly']
+            default: 'month',
+            enum: ['month', 'year']
         },
         membershipStartDate: {
             type: String
@@ -107,7 +107,7 @@ const UserSchema = new mongoose.Schema({
         }
     },
 
-}, {timestamps: true})
+}, {timestamps: true});
 
 UserSchema.pre('save', async function (next) {
     if (!this.isModified('password')) {
@@ -118,4 +118,4 @@ UserSchema.pre('save', async function (next) {
 });
 
 
-module.exports = mongoose.model('User', UserSchema)
+module.exports = mongoose.model('User', UserSchema);
