@@ -8,7 +8,7 @@ const User = require('../../models/UserSchema'),
 exports.registerUser = async (req, res) => {
     if (req.method !== serverInfo.route.METHOD_POST) return res.status(400).json({msg: serverInfo.error.INVALID_REQUEST})
 
-    const {name, address, username, email, dob, avatar, membership, notifications, password, card} = req.body;
+    const {name, address, username, email, dob, avatar, membership, notifications, password, card, isAdmin} = req.body;
 
     try {
         // Check for existing user
@@ -50,7 +50,8 @@ exports.registerUser = async (req, res) => {
             avatar,
             membership,
             notifications,
-            password
+            password,
+            isAdmin
         })
         await newUser.save()
         await sendSignupMessages(newUser)

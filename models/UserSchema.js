@@ -28,12 +28,17 @@ const UserSchema = new mongoose.Schema({
         required: false,
         default: 'https://res.cloudinary.com/purity-cottage/image/upload/v1620865447/PCSv4/user_kfjvu4.png'
     },
+    isAdmin: {
+        type: Boolean,
+        required: true,
+        default: false
+    },
     membership: {
         membershipType: {
             type: String,
             required: false,
             default: 'basic',
-            enum: ['basic', 'premium', 'admin']
+            enum: ['basic', 'premium']
         },
         paymentFrequency: {
             type: String,
