@@ -1,5 +1,5 @@
 const router = require('express').Router(),
-    {getAllQuotes, getQuoteById, postAddNewQuote, putUpdateQuoteById, deleteQuoteById} = require('../controllers/quote-controllers');
+    {getAllQuotes, getQuoteById, postAddNewQuote, putUpdateQuoteById, deleteQuoteById} = require('../../controllers/quotes/quote-controllers');
 
 router
     .route('/')

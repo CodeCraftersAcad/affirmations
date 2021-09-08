@@ -1,6 +1,6 @@
 const axios = require('axios'),
-    Quote = require('../models/QuoteSchema'),
-    serverInfo = require('../utils/constants');
+    Quote = require('../../models/QuoteSchema'),
+    serverInfo = require('../../utils/constants');
 
 exports.getAllQuotes = async (req, res) => {
     if (req.method !== serverInfo.route.METHOD_GET) return res.status(400).json({msg: serverInfo.error.INVALID_REQUEST})
