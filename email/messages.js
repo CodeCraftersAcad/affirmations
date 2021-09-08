@@ -1,6 +1,6 @@
 const nodeMailer = require('nodemailer');
     const sendGridTransport = require('nodemailer-sendgrid-transport');
-const { generateSignupEmailTemplate } = require('./templates');
+const { generateSignupEmailTemplate, generateAffirmationEmail } = require('./templates');
 
 
 const options = {
@@ -11,10 +11,13 @@ const options = {
 let mailer = nodeMailer.createTransport(sendGridTransport(options));
 
 exports.sendSignupMessages = async (user) => {
-    let messagesSent;
+
+    // Check if user is wanting email affirmations as well. Maybe we only send this one after sign up. Talk about it another day.
+    user.notifications.email && await this.sendEmailAffirmation(user.email)
+
     try {
             let emailMessage = generateSignupEmailTemplate(user);
-            let sendMessage = await mailer.sendMail(emailMessage, (err, res) => {
+            await mailer.sendMail(emailMessage, (err, res) => {
                 if (err) {
                     return console.log(err)
                 }
@@ -23,9 +26,24 @@ exports.sendSignupMessages = async (user) => {
                     return true
                 }
             })
-        console.log(sendMessage)
-        return messagesSent = true;
     } catch (err) {
         console.log(err)
     }
 };
+
+exports.sendEmailAffirmation = async (email) => {
+    try {
+        let emailMessage = generateAffirmationEmail(email);
+        await mailer.sendMail(emailMessage, (err, res) => {
+            if (err) {
+                return console.log(err)
+            }
+            else {
+                console.log(res)
+                return true
+            }
+        })
+    } catch (err) {
+        console.log(err)
+    }
+}

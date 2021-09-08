@@ -45,11 +45,12 @@ exports.generateSignupEmailTemplate = user => {
     };
 };
 
-exports.generateContactEmailTemplate = message => {
+
+exports.generateAffirmationEmail = (email) => {
     return {
-        to: 'puritycottage@gmail.com',
-        from: 'puritycottage@gmail.com',
-        subject: `${message.name} wants to talk to you about ${message.reasonSelect}`,
+        to: email,
+        from: process.env.SENDGRID_EMAIL,
+        subject: `Sign-up success: Thank you for signing up with CCA Affirmations`,
         html: `
        <div style="height: 50vh;
                  width: 80%;
@@ -60,19 +61,30 @@ exports.generateContactEmailTemplate = message => {
                  overflow: hidden;">
 
     <div style="">
-        <h3 style="text-align: center;
-                    color: #e53935">${message.name} is contacting us about ${message.reasonSelect}</h3>
+        <h1 style="text-align: center;
+                    color: #e53935">Your First Affirmation:</h1>
         <p style="text-align: center;
                     width: 60%;
                     margin: 0 auto 20px auto;
                     color: black">
-                    
-                    Their email: ${message.email}
-                    
-         ${message.message}
+            You have successfully created an account with Affirmations
         </p>
+    </div>
+
+    <div style="width: 60%;
+                height: auto;
+                background-color: lightgrey;
+                margin: 0 auto;
+                padding: 2em;">
+     
+        <p style="text-align: center;
+               margin-top: 5px;
+               color: black">
+            You are now recieving daily affirmations!
+        </p>
+
     </div>
 </div>
                 `
     };
-};
+}

@@ -58,20 +58,19 @@ exports.registerUser = async (req, res) => {
 
         // Send back user information
         if (newUser) {
-
             res.status(201).json({
                 _id: newUser._id,
                 name: newUser.name,
                 email: newUser.email,
-                membershipType: newUser.membership.membershipType,
+                membership: newUser.membership,
                 token: genJWTToken(newUser._id),
-                avatar: newUser.avatar,
-                membership: newUser.membership
+                avatar: newUser.avatar
             })
         }
 
     } catch (err) {
         console.log(serverInfo.error.SERVER_ERROR)
+        console.log(err)
     }
 }
 
