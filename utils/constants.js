@@ -17,7 +17,9 @@ module.exports = {
     },
     user: {
         USER_ALREADY_EXISTS: 'A user already exist with this email',
-        PASSWORD_ERROR: 'Password must be between 6 and 20 characters'
+        PASSWORD_ERROR: 'Password must be between 6 and 20 characters',
+        NO_USER_FOUND: 'No user was found with this username and password',
+        EMPTY_USERNAME_PASSWORD: 'Please enter a username and password',
     },
     membership: {
         BASIC_MEMBERSHIP: 'basic',

@@ -26,9 +26,9 @@ app.get("/test", (req, res) => {
 });
 
 // use routes
-app.use('/quotes', require('./routes/quote-routes'));
-app.use('/news', require('./routes/news-routes'));
-app.use('/user', require('./routes/auth/register'))
+app.use('/quotes', require('./routes/quotes/quote-routes'));
+app.use('/news', require('./routes/quotes/news-routes'));
+app.use('/auth', require('./routes/auth/auth-routes'))
 
 // express port listener
 app.listen(PORT, () => console.log(`http://localhost:${PORT}`));

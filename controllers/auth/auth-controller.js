@@ -3,7 +3,7 @@ const User = require('../../models/UserSchema'),
     {processCreditCardInfo} = require('../../utils/Payment/payment'),
     moment = require('moment'),
     serverInfo = require('../../utils/constants'),
-{sendSignupMessages} = require('../../email/messages');
+    {sendSignupMessages} = require('../../email/messages');
 
 exports.registerUser = async (req, res) => {
     if (req.method !== serverInfo.route.METHOD_POST) return res.status(400).json({msg: serverInfo.error.INVALID_REQUEST})
@@ -71,5 +71,36 @@ exports.registerUser = async (req, res) => {
 
     } catch (err) {
         console.log(serverInfo.error.SERVER_ERROR)
+    }
+}
+
+exports.loginUser = async (req, res) => {
+    if (req.method !== serverInfo.route.METHOD_POST) return res.status(400).json({msg: serverInfo.error.INVALID_REQUEST})
+
+    try {
+        // Receive incoming data
+        const {username, password} = req.body;
+
+        // Check for username and password are not empty
+        if (!username && !password) return res.status(400).json({msg: serverInfo.user.EMPTY_USERNAME_PASSWORD})
+
+        // Check if user exists
+        let user = await User.findOne({username}).select('password email name membership');
+        if (!user) return res.status(400).json({msg: serverInfo.user.NO_USER_FOUND});
+
+        // Compare user password with password passed in and pass the user to frontend if found
+        let loginUser = await user.comparePassword(password)
+        if (loginUser) {
+            // console.log(user)
+            return res.status(200).json({
+                _id: user._id,
+                name: user.name,
+                email: user.email,
+                membership: user.membership,
+                token: genJWTToken(user._id)
+            })
+        }
+    } catch (err) {
+        console.log(err)
     }
 }

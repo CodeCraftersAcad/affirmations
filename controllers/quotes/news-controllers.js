@@ -1,5 +1,5 @@
-const articles = require('../utils/news-service'),
-    serverInfo = require('../utils/constants');
+const articles = require('../../utils/news-service'),
+    serverInfo = require('../../utils/constants');
 
 
 exports.getAllNews = async (req, res) => {
