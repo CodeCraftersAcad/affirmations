@@ -3,7 +3,9 @@ const User = require('../../models/UserSchema'),
     {processCreditCardInfo} = require('../../utils/Payment/payment'),
     moment = require('moment'),
     serverInfo = require('../../utils/constants'),
-    {sendSignupMessages} = require('../../email/messages');
+    {sendSignupMessages} = require('../../email/messages'),
+    {dbErrorHandling} = require("../../utils/error/db-errrors"),
+    {logErrorToDb} = require("../../utils/helpers/db-helpers");
 
 exports.registerUser = async (req, res) => {
     if (req.method !== serverInfo.route.METHOD_POST) return res.status(400).json({msg: serverInfo.error.INVALID_REQUEST})
@@ -69,8 +71,14 @@ exports.registerUser = async (req, res) => {
         }
 
     } catch (err) {
-        console.log(serverInfo.error.SERVER_ERROR)
-        console.log(err)
+        let error = dbErrorHandling(err);
+        if (error) {
+            // Log error data to db
+            await logErrorToDb(error, req.originalUrl, req.method)
+
+            // Send message to frontend
+            res.status(500).json({msg: error.msg})
+        }
     }
 }
 
@@ -91,7 +99,6 @@ exports.loginUser = async (req, res) => {
         // Compare user password with password passed in and pass the user to frontend if found
         let loginUser = await user.comparePassword(password)
         if (loginUser) {
-            // console.log(user)
             return res.status(200).json({
                 _id: user._id,
                 name: user.name,
@@ -99,8 +106,17 @@ exports.loginUser = async (req, res) => {
                 membership: user.membership,
                 token: genJWTToken(user._id)
             })
+        } else {
+            return res.status(400).json({msg: serverInfo.user.NO_USER_FOUND})
         }
     } catch (err) {
-        console.log(err)
+        let error = dbErrorHandling(err);
+        if (error) {
+            // Log error data to db
+            await logErrorToDb(error, req.originalUrl, req.method)
+
+            // Send message to frontend
+            res.status(500).json({msg: error.msg})
+        }
     }
 }
