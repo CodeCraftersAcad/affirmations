@@ -1,4 +1,6 @@
 const mongoose = require('mongoose');
+const {logErrorToDb} = require("../utils/helpers/db-helpers");
+const {dbErrorHandling} = require("../utils/error/db-errrors");
 
 const connectDB = async (env) => {
     try {
@@ -23,8 +25,11 @@ const connectDB = async (env) => {
         }
 
     } catch (err) {
-        console.log(err.message)
-        console.log(err.code)
+        let error = dbErrorHandling(err);
+        if (error) {
+            // Log error data to db
+            await logErrorToDb(error, 'Connection to DB', 'connection')
+        }
     }
 }
 
