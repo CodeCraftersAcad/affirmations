@@ -1,3 +1,4 @@
+const bcrypt = require('bcryptjs')
 const users = [
 
     {
@@ -24,7 +25,7 @@ const users = [
             "days": [0, 2, 4],
             "email": true
         },
-        "password": "123123",
+        "password": bcrypt.hashSync('123123', 10),
         "isAdmin": true
 
     },
@@ -52,7 +53,7 @@ const users = [
             "days": [0, 4, 6],
             "email": false
         },
-        "password": "123123",
+        "password": bcrypt.hashSync('123123', 10),
         "isAdmin": false
     },
     {
@@ -79,7 +80,7 @@ const users = [
             "days": [0],
             "email": false
         },
-        "password": "123123",
+        "password": bcrypt.hashSync('123123', 10),
         "isAdmin": false
     },
 ]
