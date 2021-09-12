@@ -39,7 +39,7 @@ exports.postAddNewQuote = async (req, res) => {
 }
 
 exports.getQuoteById = async (req, res) => {
-    if (req.method !== serverInfo.route.METHOD_POST) return res.status(400).json({msg: serverInfo.error.INVALID_REQUEST});
+    if (req.method !== serverInfo.route.METHOD_GET) return res.status(400).json({msg: serverInfo.error.INVALID_REQUEST});
     const {quoteId} = req.params;
 
     try {

@@ -26,8 +26,14 @@ exports.findUserQuote = async (req, res, next) => {
 
 exports.getAllQuotesFromDb = async (req, res, next) => {
     try {
+        const keyword = req.params.quoteId ? {
+            _id: {
+                $regex: req.params.quoteId,
+                $options: 'i'
+            },
+        } : {}
         const result = await axios.get(process.env.FREE_QUOTES_API);
-        const quotesInDB = await Quote.find();
+        const quotesInDB = await Quote.find({...keyword});
         req.dbQuotes = [...quotesInDB, ...result.data]
         next()
     } catch (err) {

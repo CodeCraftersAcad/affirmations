@@ -17,7 +17,7 @@ router
 
 router
     .route('/:quoteId')
-    .get(getQuoteById)
+    .get(getAllQuotesFromDb, getQuoteById)
     .put(auth, findUserQuote, putUpdateQuoteById)
     .delete(auth, findUserQuote, deleteQuoteById);
 
