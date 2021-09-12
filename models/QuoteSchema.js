@@ -1,6 +1,11 @@
 const mongoose = require('mongoose');
 
 const QuoteSchema = new mongoose.Schema({
+    creator: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
+    },
     author: {
         type: String,
         required: [false, "Author name required"]
@@ -18,9 +23,15 @@ const QuoteSchema = new mongoose.Schema({
         default: 0
     },
     visibility: {
-        type: Boolean,
-        default: false
+        public: {
+            type: Boolean,
+            default: false
+        },
+        private: {
+            type: Boolean,
+            default: true
+        }
     }
-}, { timestamps: true });
+}, {timestamps: true});
 
 module.exports = mongoose.model("Quote", QuoteSchema);

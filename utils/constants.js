@@ -9,7 +9,8 @@ module.exports = {
         QUOTE_EXISTS: 'A quote with that text already exists',
         QUOTE_NOT_FOUND: 'Quote not found please try again or contact support if the problem persists',
         QUOTE_UPDATED: 'Quote updated',
-        QUOTE_DELETED: 'Quote deleted'
+        QUOTE_DELETED: 'Quote deleted',
+        NOT_USER_QUOTE: 'This quote does not belong to you'
     },
     articles: {
         ARTICLES_FOUND: 'Found articles',
@@ -20,6 +21,7 @@ module.exports = {
         PASSWORD_ERROR: 'Password must be between 6 and 20 characters',
         NO_USER_FOUND: 'No user was found with this username and password',
         EMPTY_USERNAME_PASSWORD: 'Please enter a username and password',
+        MUST_LOGIN: 'You must be logged in to preform this action'
     },
     membership: {
         BASIC_MEMBERSHIP: 'basic',
