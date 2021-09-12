@@ -1,6 +1,5 @@
-const Quote = require('../../models/QuoteSchema'),
-    serverInfo = require('../../utils/constants')
-const axios = require("axios");
+const Quote = require('../models/QuoteSchema'),
+    serverInfo = require('../utils/constants');
 
 exports.findUserQuote = async (req, res, next) => {
     try {
@@ -28,9 +27,7 @@ exports.getAllQuotesFromDb = async (req, res, next) => {
     try {
         const keyword = req.params.quoteId ? req.params.quoteId : {}
 
-        const result = await axios.get(process.env.FREE_QUOTES_API);
-        const quotesInDB = await Quote.find({...keyword});
-        req.dbQuotes = [...quotesInDB, ...result.data]
+        req.dbQuotes = await Quote.find({...keyword})
         next()
     } catch (err) {
         console.log(err)
