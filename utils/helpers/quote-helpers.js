@@ -27,7 +27,7 @@ exports.findUserQuote = async (req, res, next) => {
 exports.getAllQuotesFromDb = async (req, res, next) => {
     try {
         const keyword = req.params.quoteId ? {
-            _id: {
+            name: {
                 $regex: req.params.quoteId,
                 $options: 'i'
             },
