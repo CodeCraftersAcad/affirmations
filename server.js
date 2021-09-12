@@ -6,11 +6,10 @@ const express = require('express'),
     cors = require('cors'),
     morgan = require('morgan'),
     PORT = process.env.PORT || 3001,
-    connectDB = require('./config/db'),
-    env = app.get('env');
+    connectDB = require('./config/db');
 
 // connect to DB
-connectDB(env);
+connectDB();
 
 // route logging
 app.use(morgan('dev'));

@@ -6,17 +6,19 @@ const router = require('express').Router(),
         putUpdateQuoteById,
         deleteQuoteById
     } = require('../../controllers/quotes/quote-controllers');
+const {auth} = require('../../middleware/auth');
+const {findUserQuote, getAllQuotesFromDb} = require("../../utils/helpers/quote-helpers");
 
 router
     .route('/')
-    .get(getAllQuotes)
-    .post(postAddNewQuote)
+    .get(getAllQuotesFromDb, getAllQuotes)
+    .post(auth, postAddNewQuote)
 ;
 
 router
     .route('/:quoteId')
-    .get(getQuoteById)
-    .put(putUpdateQuoteById)
-    .delete(deleteQuoteById);
+    .get(getAllQuotesFromDb, getQuoteById)
+    .put(auth, findUserQuote, putUpdateQuoteById)
+    .delete(auth, findUserQuote, deleteQuoteById);
 
 module.exports = router;
