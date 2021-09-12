@@ -44,7 +44,7 @@ const UserSchema = new mongoose.Schema({
         paymentFrequency: {
             type: String,
             default: 'month',
-            enum: ['month', 'year']
+            enum: ['month', 'year', 'none']
         },
         membershipStartDate: {
             type: String
