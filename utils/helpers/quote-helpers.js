@@ -7,7 +7,7 @@ exports.findUserQuote = async (req, res, next) => {
         const {quoteId} = req.params;
         let quote;
         if (req.user.isAdmin) quote = await Quote.findOne({_id: quoteId})
-         else {
+        else {
             quote = await Quote.findOne({
                 $and: [
                     {_id: quoteId},
@@ -26,12 +26,8 @@ exports.findUserQuote = async (req, res, next) => {
 
 exports.getAllQuotesFromDb = async (req, res, next) => {
     try {
-        const keyword = req.params.quoteId ? {
-            name: {
-                $regex: req.params.quoteId,
-                $options: 'i'
-            },
-        } : {}
+        const keyword = req.params.quoteId ? req.params.quoteId : {}
+
         const result = await axios.get(process.env.FREE_QUOTES_API);
         const quotesInDB = await Quote.find({...keyword});
         req.dbQuotes = [...quotesInDB, ...result.data]
