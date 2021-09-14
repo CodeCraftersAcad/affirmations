@@ -7,7 +7,7 @@ const router = require('express').Router(),
         deleteQuoteById
     } = require('../../controllers/quotes/quote-controllers');
 const {auth} = require('../../middleware/auth');
-const {findUserQuote, getAllQuotesFromDb} = require("../../utils/helpers/quote-helpers");
+const {findUserQuote, getAllQuotesFromDb} = require("../../middleware/quote");
 
 router
     .route('/')

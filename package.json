@@ -6,7 +6,9 @@
     "scripts": {
         "test": "jest",
         "dev": "nodemon server.js",
-        "start": "node server.js"
+        "start": "node server.js",
+        "data:import": "node mock/seeder.js",
+        "data:destroy": "node mock/seeder.js -d"
     },
     "keywords": [],
     "author": "Code Crafters Acad",

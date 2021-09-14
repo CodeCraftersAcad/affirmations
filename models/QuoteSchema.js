@@ -4,7 +4,7 @@ const QuoteSchema = new mongoose.Schema({
     creator: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
-        required: true
+        required: false
     },
     author: {
         type: String,
