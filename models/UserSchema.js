@@ -20,85 +20,85 @@ const UserSchema = new mongoose.Schema({
             'Please add a valid email'
         ]
     },
-    dob: {
-        type: String,
-        required: [true, 'Please add your birthday']
-    },
-    avatar: {
-        type: String,
-        required: false,
-        default: 'https://res.cloudinary.com/purity-cottage/image/upload/v1620865447/PCSv4/user_kfjvu4.png'
-    },
-    isAdmin: {
-        type: Boolean,
-        required: true,
-        default: false
-    },
-    membership: {
-        membershipType: {
-            type: String,
-            required: false,
-            default: 'basic',
-            enum: ['basic', 'premium']
-        },
-        paymentFrequency: {
-            type: String,
-            default: 'month',
-            enum: ['month', 'year', 'none']
-        },
-        membershipStartDate: {
-            type: String
-        },
-        membershipEndDate: {
-            type: String
-        },
-        membershipNotifyCancel: {
-            type: Boolean,
-            default: false,
-            required: false
-        },
-        confirmSubscription: {
-            type: Boolean,
-            required: false,
-            default: false
-        },
-        membershipValidation: {
-            type: Boolean,
-            required: true,
-            default: true
-        }
-    },
-    favoriteQuotes: {
-        type: [],
-        required: false
-    },
-    theme: {
-        type: String,
-        required: true,
-        default: 'light'
-    },
-    notifications: {
-        notify: {
-            type: Boolean,
-            required: true,
-            default: false
-        },
-        frequency: {
-            type: Number,
-            required: true,
-            default: 1
-        },
-        days: {
-            type: [],
-            required: true,
-            default: []
-        },
-        email: {
-            type: Boolean,
-            required: false,
-            default: false
-        }
-    },
+    // dob: {
+    //     type: String,
+    //     required: [true, 'Please add your birthday']
+    // },
+    // avatar: {
+    //     type: String,
+    //     required: false,
+    //     default: 'https://res.cloudinary.com/purity-cottage/image/upload/v1620865447/PCSv4/user_kfjvu4.png'
+    // },
+    // isAdmin: {
+    //     type: Boolean,
+    //     required: true,
+    //     default: false
+    // },
+    // membership: {
+    //     membershipType: {
+    //         type: String,
+    //         required: false,
+    //         default: 'basic',
+    //         enum: ['basic', 'premium']
+    //     },
+    //     paymentFrequency: {
+    //         type: String,
+    //         default: 'month',
+    //         enum: ['month', 'year', 'none']
+    //     },
+    //     membershipStartDate: {
+    //         type: String
+    //     },
+    //     membershipEndDate: {
+    //         type: String
+    //     },
+    //     membershipNotifyCancel: {
+    //         type: Boolean,
+    //         default: false,
+    //         required: false
+    //     },
+    //     confirmSubscription: {
+    //         type: Boolean,
+    //         required: false,
+    //         default: false
+    //     },
+    //     membershipValidation: {
+    //         type: Boolean,
+    //         required: true,
+    //         default: true
+    //     }
+    // },
+    // favoriteQuotes: {
+    //     type: [],
+    //     required: false
+    // },
+    // theme: {
+    //     type: String,
+    //     required: true,
+    //     default: 'light'
+    // },
+    // notifications: {
+    //     notify: {
+    //         type: Boolean,
+    //         required: true,
+    //         default: false
+    //     },
+    //     frequency: {
+    //         type: Number,
+    //         required: true,
+    //         default: 1
+    //     },
+    //     days: {
+    //         type: [],
+    //         required: true,
+    //         default: []
+    //     },
+    //     email: {
+    //         type: Boolean,
+    //         required: false,
+    //         default: false
+    //     }
+    // },
     password: {
         type: String,
         required: [true, 'Please enter a password'],
