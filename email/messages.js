@@ -3,7 +3,9 @@ const sendGridTransport = require('nodemailer-sendgrid-transport');
 const {
     generateSignupEmailTemplate,
     generateAffirmationEmail,
-    generatePasswordResetEmailTemplate
+    generatePasswordResetEmailTemplate,
+    generateUserUpdatedEmailTemplate,
+    generateUserDeleteAccountEmailTemplate
 } = require('./templates');
 
 
@@ -53,6 +55,42 @@ exports.sendEmailAffirmation = async (email) => {
 exports.sendPasswordResetEmail = async (user) => {
     try {
         let emailMessage = generatePasswordResetEmailTemplate(user);
+        await mailer.sendMail(emailMessage, (err, res) => {
+            if (err) {
+                console.log(err)
+                return err
+            } else {
+                console.log(res)
+                return {msg: 'This email has been sent'}
+            }
+        })
+    } catch (err) {
+        console.log(err)
+    }
+};
+
+exports.sendUserUpdatedEmail = async (user) => {
+    console.log(user)
+    try {
+        let emailMessage = generateUserUpdatedEmailTemplate(user);
+        await mailer.sendMail(emailMessage, (err, res) => {
+            if (err) {
+                console.log(err)
+                return err
+            } else {
+                console.log(res)
+                return {msg: 'This email has been sent'}
+            }
+        })
+    } catch (err) {
+        console.log(err)
+    }
+};
+
+exports.sendUserAccountDeleteEmail = async (user) => {
+    console.log(user)
+    try {
+        let emailMessage = generateUserDeleteAccountEmailTemplate(user);
         await mailer.sendMail(emailMessage, (err, res) => {
             if (err) {
                 console.log(err)

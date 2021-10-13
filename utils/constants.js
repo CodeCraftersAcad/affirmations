@@ -27,7 +27,14 @@ module.exports = {
         PASSWORD_RESET_ACTIVE: 'You have already requested to reset your password. Please check your email for your' +
             'password reset link. This link will be active for 15 minutes',
         PASSWORD_UPDATED: 'Your password has been updated',
-        INVALID_TOKEN: 'Invalid token provided. If this problem persists please contact support'
+        INVALID_TOKEN: 'Invalid token provided. Please try again or contact support if' +
+            ' the problem persists',
+        USER_SUCCESSFULLY_UPDATED: 'You have updated your information',
+        USER_UPDATE_ERROR: 'Could not update user with this information. Please try again or contact support if' +
+            ' the problem persists',
+        USER_DELETE_ERROR: 'Could not deleting your user information. Please try again or contact support if' +
+            ' the problem persists',
+        USER_SUCCESSFULLY_DELETED: 'Your account has been deleted. We hope to see you again soon'
     },
     membership: {
         BASIC_MEMBERSHIP: 'basic',

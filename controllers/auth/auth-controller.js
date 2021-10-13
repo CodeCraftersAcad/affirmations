@@ -3,11 +3,11 @@ const User = require('../../models/UserSchema'),
     serverInfo = require('../../utils/constants'),
     {v4: uuidv4} = require('uuid'),
     moment = require('moment'),
-    {sendPasswordResetEmail} = require('../../email/messages');
+    {sendPasswordResetEmail, sendUserUpdatedEmail, sendUserAccountDeleteEmail} = require('../../email/messages');
 
-exports.registerUser = async (req, res) => {
+exports.postRegisterNewUser = async (req, res) => {
     // Check for correct HTTP method
-    if (req.method !== serverInfo.route.METHOD_POST) return res.status(400).json({msg: serverInfo.error.INVALID_REQUEST})
+    if (req.method !== serverInfo.route.METHOD_POST) return res.status(400).json({msg: serverInfo.error.INVALID_REQUEST});
 
     const {name, username, email, password} = req.body.user;
     try {
@@ -16,7 +16,7 @@ exports.registerUser = async (req, res) => {
         if (existingUser) return res.status(400).json({msg: serverInfo.user.USER_ALREADY_EXISTS});
 
         // Check password length
-        if (password.length < 6 || password.length > 20) return res.status(400).json({msg: serverInfo.user.PASSWORD_ERROR})
+        if (password.length < 6 || password.length > 20) return res.status(400).json({msg: serverInfo.user.PASSWORD_ERROR});
 
         // Create new user
         const newUser = await User.create({
@@ -25,7 +25,7 @@ exports.registerUser = async (req, res) => {
             email,
             password,
         })
-        await newUser.save()
+        await newUser.save();
         // await sendSignupMessages(newUser)
 
         // Send back user information
@@ -44,23 +44,23 @@ exports.registerUser = async (req, res) => {
     }
 }
 
-exports.loginUser = async (req, res) => {
+exports.postUserLoginUser = async (req, res) => {
     // Check for correct HTTP method
-    if (req.method !== serverInfo.route.METHOD_POST) return res.status(400).json({msg: serverInfo.error.INVALID_REQUEST})
+    if (req.method !== serverInfo.route.METHOD_POST) return res.status(400).json({msg: serverInfo.error.INVALID_REQUEST});
 
     try {
         // Receive incoming data
         const {username, password} = req.body.userLoginInfo;
 
         // Check for username and password are not empty
-        if (!username && !password) return res.status(400).json({msg: serverInfo.user.EMPTY_USERNAME_PASSWORD})
+        if (!username && !password) return res.status(400).json({msg: serverInfo.user.EMPTY_USERNAME_PASSWORD});
 
         // Check if user exists
         let user = await User.findOne({username}).select('password email name membership');
         if (!user) return res.status(400).json({msg: serverInfo.user.NO_USER_FOUND});
 
         // Compare user password with password passed in and pass the user to frontend if found
-        let loginUser = await user.comparePassword(password)
+        let loginUser = await user.comparePassword(password);
         if (loginUser) {
             return res.status(200).json({
                 _id: user._id,
@@ -78,7 +78,7 @@ exports.loginUser = async (req, res) => {
     }
 }
 
-exports.resetUserPassword = async (req, res) => {
+exports.getResetUserPassword = async (req, res) => {
     // Check for correct HTTP method
     if (req.method !== serverInfo.route.METHOD_GET) return res.status(400).json({msg: serverInfo.user.INVALID_REQUEST});
 
@@ -107,7 +107,7 @@ exports.resetUserPassword = async (req, res) => {
     }
 }
 
-exports.userPasswordResetUpdate = async (req, res) => {
+exports.putUserPasswordResetUpdate = async (req, res) => {
     // Check for correct HTTP method
     if (req.method !== serverInfo.route.METHOD_PUT) return res.status(400).json({msg: serverInfo.user.INVALID_REQUEST});
 
@@ -126,9 +126,62 @@ exports.userPasswordResetUpdate = async (req, res) => {
 
         await user.save();
 
-        return res.status(200).json({msg: serverInfo.user.PASSWORD_UPDATED})
+        return res.status(200).json({msg: serverInfo.user.PASSWORD_UPDATED});
     } catch (err) {
         console.log(err)
+    }
+}
+
+exports.putUpdateUserInformation = async (req, res) => {
+    // Check for correct HTTP method
+    if (req.method !== serverInfo.route.METHOD_PUT) return res.status(400).json({msg: serverInfo.user.INVALID_REQUEST});
+
+    let id = req.params.id;
+
+    try {
+        // Receive incoming data
+        let updateQuery = req.body.updatedUserInformation;
+
+        // Set options for mongoose
+        let options = {
+            new: true,
+            setDefaultsOnInsert: true
+        };
+
+        // Check if user exists
+        let updatedUserInfo = await User.findOneAndUpdate({_id: id}, updateQuery, options);
+        if (!updatedUserInfo) return res.status(400).json({msg: serverInfo.user.USER_UPDATE_ERROR});
+
+        await sendUserUpdatedEmail(updatedUserInfo)
+
+        res.status(201).json({updatedUserInfo, msg: serverInfo.user.USER_SUCCESSFULLY_UPDATED});
+
+    } catch (err) {
+        // Send message to frontend
+        res.status(500).json({msg: err})
+    }
+}
+
+exports.deleteUserAccountInformation = async (req, res) => {
+    // Check for correct HTTP method
+    if (req.method !== serverInfo.route.METHOD_DELETE) return res.status(400).json({msg: serverInfo.user.INVALID_REQUEST});
+
+    let id = req.params.id;
+
+    try {
+        // Find user with id and delete
+        let deleteUserAccountInformation = await User.findByIdAndDelete({_id: id});
+        console.log(deleteUserAccountInformation)
+        if (!deleteUserAccountInformation) return res.status(400).json({msg: serverInfo.user.USER_DELETE_ERROR});
+
+        await sendUserAccountDeleteEmail(deleteUserAccountInformation)
+
+        // Send message to user on successful deletion
+        res.status(200).json({msg: serverInfo.user.USER_SUCCESSFULLY_DELETED});
+
+    } catch (err) {
+        // Send message to frontend
+        res.status(500).json({msg: err})
     }
 }
 

@@ -106,12 +106,73 @@ exports.generatePasswordResetEmailTemplate = (user) => {
 
     <div style="">
         <h1 style="text-align: center;
-                    color: #e53935">Your First Affirmation:</h1>
+                    color: #e53935">Your Password reset request:</h1>
         <p style="text-align: center;
                     width: 60%;
                     margin: 0 auto 20px auto;
                     color: black">
             You requested a password reset. Please <a href="${returnUrl}">click here.</a>
+        </p>
+    </div>
+</div>
+                `
+    };
+}
+
+exports.generateUserUpdatedEmailTemplate = (user) => {
+    return {
+        to: user.email,
+        from: process.env.SENDGRID_EMAIL,
+        subject: `CCA Affirmation updated account information`,
+        html: `
+       <div style="height: 50vh;
+                 width: 80%;
+                 position: absolute;
+                 top: 50%;
+                 left: 50%;
+                 transform: translate(-50%, -50%);
+                 overflow: hidden;">
+
+    <div style="">
+        <h1 style="text-align: center;
+                    color: #e53935">Your account has been updated:</h1>
+        <p style="text-align: center;
+                    width: 60%;
+                    margin: 0 auto 20px auto;
+                    color: black">
+            You have recently updated your information
+        </p>
+    </div>
+</div>
+                `
+    };
+}
+
+exports.generateUserDeleteAccountEmailTemplate = (user) => {
+    const returnUrl = `https://localhost:3000/survey/improvement`
+
+    return {
+        to: user.email,
+        from: process.env.SENDGRID_EMAIL,
+        subject: `CCA Affirmation deleted account`,
+        html: `
+       <div style="height: 50vh;
+                 width: 80%;
+                 position: absolute;
+                 top: 50%;
+                 left: 50%;
+                 transform: translate(-50%, -50%);
+                 overflow: hidden;">
+
+    <div style="">
+        <h1 style="text-align: center;
+                    color: #e53935">Your account has been deleted:</h1>
+        <p style="text-align: center;
+                    width: 60%;
+                    margin: 0 auto 20px auto;
+                    color: black">
+            Your account has been deleted and all stored information we have on you. We hope to see you back soon. 
+            If there is anything you think we can do to improve please leave us a comment <a href="${returnUrl}">here.</a>
         </p>
     </div>
 </div>
