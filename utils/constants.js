@@ -21,7 +21,13 @@ module.exports = {
         PASSWORD_ERROR: 'Password must be between 6 and 20 characters',
         NO_USER_FOUND: 'No user was found with this username and password',
         EMPTY_USERNAME_PASSWORD: 'Please enter a username and password',
-        MUST_LOGIN: 'You must be logged in to preform this action'
+        MUST_LOGIN: 'You must be logged in to preform this action',
+        EMAIL_NOT_VALID: 'An email is required for this action',
+        PASSWORD_RESET_CONFIRMED: 'An email has been sent with instructions to reset your password',
+        PASSWORD_RESET_ACTIVE: 'You have already requested to reset your password. Please check your email for your' +
+            'password reset link. This link will be active for 15 minutes',
+        PASSWORD_UPDATED: 'Your password has been updated',
+        INVALID_TOKEN: 'Invalid token provided. If this problem persists please contact support'
     },
     membership: {
         BASIC_MEMBERSHIP: 'basic',

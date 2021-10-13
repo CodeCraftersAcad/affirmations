@@ -1,8 +1,12 @@
 const User = require('../../models/UserSchema'),
     {genJWTToken} = require('../../utils/genJWT'),
-    serverInfo = require('../../utils/constants');
+    serverInfo = require('../../utils/constants'),
+    {v4: uuidv4} = require('uuid'),
+    moment = require('moment'),
+    {sendPasswordResetEmail} = require('../../email/messages');
 
 exports.registerUser = async (req, res) => {
+    // Check for correct HTTP method
     if (req.method !== serverInfo.route.METHOD_POST) return res.status(400).json({msg: serverInfo.error.INVALID_REQUEST})
 
     const {name, username, email, password} = req.body.user;
@@ -41,6 +45,7 @@ exports.registerUser = async (req, res) => {
 }
 
 exports.loginUser = async (req, res) => {
+    // Check for correct HTTP method
     if (req.method !== serverInfo.route.METHOD_POST) return res.status(400).json({msg: serverInfo.error.INVALID_REQUEST})
 
     try {
@@ -71,4 +76,63 @@ exports.loginUser = async (req, res) => {
         // Send message to frontend
         res.status(500).json({msg: err})
     }
+}
+
+exports.resetUserPassword = async (req, res) => {
+    // Check for correct HTTP method
+    if (req.method !== serverInfo.route.METHOD_GET) return res.status(400).json({msg: serverInfo.user.INVALID_REQUEST});
+
+    try {
+        // Validate email passed in
+        let validEmailAddress = await validateEmail(req.params.email);
+        if (!validEmailAddress) return res.status(400).json({msg: serverInfo.user.EMAIL_NOT_VALID});
+
+        // Check if user exist with passed in email
+        const user = await User.findOne({email: req.params.email});
+        if (!user) return res.status(400).json({msg: serverInfo.user.NO_USER_FOUND});
+
+        // Check if they have already requested a password reset. If not set user password reset code and validation time.
+        if (moment(user.resetPassword.validTime).isAfter()) return res.status(400).json({msg: serverInfo.user.PASSWORD_RESET_ACTIVE});
+        else {
+            user.resetPassword.resetCode = uuidv4();
+            user.resetPassword.validTime = moment().add(15, 'm').format();
+            await user.save();
+
+            // Send reset email and notify user it was sent
+            await sendPasswordResetEmail(user);
+            return res.status(200).json({msg: serverInfo.user.PASSWORD_RESET_CONFIRMED});
+        }
+    } catch (err) {
+        console.log(err)
+    }
+}
+
+exports.userPasswordResetUpdate = async (req, res) => {
+    // Check for correct HTTP method
+    if (req.method !== serverInfo.route.METHOD_PUT) return res.status(400).json({msg: serverInfo.user.INVALID_REQUEST});
+
+    // Set variable to save password coming in
+    const password = req.body.password;
+
+    try {
+        // Check for user by password reset code
+        const user = await User.findOne({'resetPassword.resetCode': req.params.id}).select('+password');
+        if (!user) return res.status(400).json({msg: serverInfo.user.INVALID_TOKEN});
+
+        // Set new user password
+        user.password = password;
+        user.resetPassword.resetCode = '';
+        user.resetPassword.validTime = '';
+
+        await user.save();
+
+        return res.status(200).json({msg: serverInfo.user.PASSWORD_UPDATED})
+    } catch (err) {
+        console.log(err)
+    }
+}
+
+const validateEmail = async (email) => {
+    const testEmail = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return testEmail.test(String(email).toLowerCase());
 }

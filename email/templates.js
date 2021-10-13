@@ -80,9 +80,39 @@ exports.generateAffirmationEmail = (email) => {
         <p style="text-align: center;
                margin-top: 5px;
                color: black">
-            You are now recieving daily affirmations!
+            You are now receiving daily affirmations!
         </p>
 
+    </div>
+</div>
+                `
+    };
+}
+
+exports.generatePasswordResetEmailTemplate = (user) => {
+    const returnUrl = `https://localhost:3000/user/passwordreset/${user.resetPassword.resetCode}`
+    return {
+        to: user.email,
+        from: process.env.SENDGRID_EMAIL,
+        subject: `CCA Affirmation password reset`,
+        html: `
+       <div style="height: 50vh;
+                 width: 80%;
+                 position: absolute;
+                 top: 50%;
+                 left: 50%;
+                 transform: translate(-50%, -50%);
+                 overflow: hidden;">
+
+    <div style="">
+        <h1 style="text-align: center;
+                    color: #e53935">Your First Affirmation:</h1>
+        <p style="text-align: center;
+                    width: 60%;
+                    margin: 0 auto 20px auto;
+                    color: black">
+            You requested a password reset. Please <a href="${returnUrl}">click here.</a>
+        </p>
     </div>
 </div>
                 `

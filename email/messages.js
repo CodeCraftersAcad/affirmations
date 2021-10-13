@@ -1,6 +1,10 @@
 const nodeMailer = require('nodemailer');
-    const sendGridTransport = require('nodemailer-sendgrid-transport');
-const { generateSignupEmailTemplate, generateAffirmationEmail } = require('./templates');
+const sendGridTransport = require('nodemailer-sendgrid-transport');
+const {
+    generateSignupEmailTemplate,
+    generateAffirmationEmail,
+    generatePasswordResetEmailTemplate
+} = require('./templates');
 
 
 const options = {
@@ -16,16 +20,15 @@ exports.sendSignupMessages = async (user) => {
     user.notifications.email && await this.sendEmailAffirmation(user.email)
 
     try {
-            let emailMessage = generateSignupEmailTemplate(user);
-            await mailer.sendMail(emailMessage, (err, res) => {
-                if (err) {
-                    return console.log(err)
-                }
-                else {
-                    console.log(res)
-                    return true
-                }
-            })
+        let emailMessage = generateSignupEmailTemplate(user);
+        await mailer.sendMail(emailMessage, (err, res) => {
+            if (err) {
+                return console.log(err)
+            } else {
+                console.log(res)
+                return true
+            }
+        })
     } catch (err) {
         console.log(err)
     }
@@ -37,8 +40,7 @@ exports.sendEmailAffirmation = async (email) => {
         await mailer.sendMail(emailMessage, (err, res) => {
             if (err) {
                 return console.log(err)
-            }
-            else {
+            } else {
                 console.log(res)
                 return true
             }
@@ -47,3 +49,20 @@ exports.sendEmailAffirmation = async (email) => {
         console.log(err)
     }
 }
+
+exports.sendPasswordResetEmail = async (user) => {
+    try {
+        let emailMessage = generatePasswordResetEmailTemplate(user);
+        await mailer.sendMail(emailMessage, (err, res) => {
+            if (err) {
+                console.log(err)
+                return err
+            } else {
+                console.log(res)
+                return {msg: 'This email has been sent'}
+            }
+        })
+    } catch (err) {
+        console.log(err)
+    }
+};
