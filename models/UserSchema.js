@@ -16,11 +16,21 @@ const UserSchema = new mongoose.Schema({
         required: [true, 'Please add an email'],
         unique: true,
         match: [
-            /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
+            /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/,
             'Please add a valid email'
         ]
     },
-    // dob: {
+    resetPassword: {
+        resetCode: {
+            type: String,
+            required: false
+        },
+        validTime: {
+            type: String,
+            required: false
+        }
+    },
+// dob: {
     //     type: String,
     //     required: [true, 'Please add your birthday']
     // },
@@ -92,11 +102,6 @@ const UserSchema = new mongoose.Schema({
     //         type: [],
     //         required: true,
     //         default: []
-    //     },
-    //     email: {
-    //         type: Boolean,
-    //         required: false,
-    //         default: false
     //     }
     // },
     password: {
@@ -105,7 +110,7 @@ const UserSchema = new mongoose.Schema({
         select: false
     },
     passwordReset: {
-        passwordResetId: {
+        resetCode: {
             type: String,
         },
         valid: {
