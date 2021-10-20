@@ -1,3 +1,5 @@
+// TODO: Would like to look into refactoring this and making it maybe one function with a switch statement
+
 const nodeMailer = require('nodemailer');
 const sendGridTransport = require('nodemailer-sendgrid-transport');
 const {
@@ -18,8 +20,8 @@ let mailer = nodeMailer.createTransport(sendGridTransport(options));
 
 exports.sendSignupMessages = async (user) => {
 
-    // Check if user is wanting email affirmations as well. Maybe we only send this one after sign up. Talk about it another day.
-    user.notifications.email && await this.sendEmailAffirmation(user.email)
+    // TODO: Check if user is wanting email affirmations as well. Maybe we only send this one after sign up. Talk about it another day.
+    await this.sendEmailAffirmation(user.email) // TODO: We will need to send this based on user notifications settings later
 
     try {
         let emailMessage = generateSignupEmailTemplate(user);

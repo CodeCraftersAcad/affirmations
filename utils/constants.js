@@ -32,7 +32,7 @@ module.exports = {
         USER_SUCCESSFULLY_UPDATED: 'You have updated your information',
         USER_UPDATE_ERROR: 'Could not update user with this information. Please try again or contact support if' +
             ' the problem persists',
-        USER_DELETE_ERROR: 'Could not deleting your user information. Please try again or contact support if' +
+        USER_DELETE_ERROR: 'Could not delete your user information. Please try again or contact support if' +
             ' the problem persists',
         USER_SUCCESSFULLY_DELETED: 'Your account has been deleted. We hope to see you again soon'
     },
