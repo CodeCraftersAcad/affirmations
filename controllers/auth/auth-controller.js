@@ -30,12 +30,15 @@ exports.postRegisterNewUser = async (req, res) => {
 
         // Send back user information
         if (newUser) {
-            res.status(201).json({
-                _id: newUser._id,
-                name: newUser.name,
-                username: newUser.username,
-                email: newUser.email,
-                token: genJWTToken(newUser._id),
+            return res.status(201).json({
+                msg: 'User created',
+                user: {   
+                    _id: newUser._id,
+                    name: newUser.name,
+                    username: newUser.username,
+                    email: newUser.email,
+                    token: genJWTToken(newUser._id),
+                }
             })
         }
 
