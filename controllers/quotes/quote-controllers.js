@@ -13,15 +13,14 @@ exports.postAddNewQuote = async (req, res) => {
     if (!req.user) return res.status(400).json({msg: serverInfo.user.MUST_LOGIN});
 
     const user = await User.findById(req.user._id)
-    const {author, text, category} = req.body;
-
+    const { author, text, category } = req.body;
     try {
         const existingQuote = await Quote.find({"text": {$regex: text, $options: "ig"}});
         if (existingQuote.length === 0) {
             const newQuote = await Quote.create({
                 creator: user._id,
                 author: author || "Unknown",
-                text: text,
+                text,
                 category,
                 visibility: {
                     public: !!user.isAdmin,
