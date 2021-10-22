@@ -3,7 +3,7 @@ const User = require('../../models/UserSchema'),
     serverInfo = require('../../utils/constants'),
     {v4: uuidv4} = require('uuid'),
     moment = require('moment'),
-    {sendPasswordResetEmail, sendUserUpdatedEmail, sendUserAccountDeleteEmail} = require('../../email/messages');
+    {sendSignupMessages, sendPasswordResetEmail, sendUserUpdatedEmail, sendUserAccountDeleteEmail} = require('../../email/messages');
 
 exports.postRegisterNewUser = async (req, res) => {
     // Check for correct HTTP method
@@ -26,7 +26,7 @@ exports.postRegisterNewUser = async (req, res) => {
             password,
         })
         await newUser.save();
-        // await sendSignupMessages(newUser)
+        await sendSignupMessages(newUser);
 
         // Send back user information
         if (newUser) {
