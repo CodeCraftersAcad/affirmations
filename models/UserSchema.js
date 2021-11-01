@@ -30,7 +30,7 @@ const UserSchema = new mongoose.Schema({
             required: false
         }
     },
-// dob: {
+    // dob: {
     //     type: String,
     //     required: [true, 'Please add your birthday']
     // },
@@ -118,7 +118,7 @@ const UserSchema = new mongoose.Schema({
         }
     },
 
-}, {timestamps: true});
+}, { timestamps: true });
 
 UserSchema.pre('save', async function (next) {
     if (!this.isModified('password')) {
@@ -129,6 +129,8 @@ UserSchema.pre('save', async function (next) {
 });
 
 UserSchema.methods.comparePassword = async function (password) {
+    const bloop = await bcrypt.compare(password, this.password);
+    console.log("bloop", bloop)
     return await bcrypt.compare(password, this.password);
 }
 module.exports = mongoose.model('User', UserSchema);

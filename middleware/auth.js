@@ -2,10 +2,15 @@ const jwt = require('jsonwebtoken'),
     User = require('../models/UserSchema');
 
 exports.auth = async (req, res, next) => {
+    res.header(
+        'Access-Control-Allow-Headers',
+        'authorization, Origin, Content-Type, Accept'
+    );
     let token;
-    if (req.body.headers.authorization && req.body.headers.authorization.startsWith('Bearer')) {
+    // console.log(req);
+    if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
         try {
-            token = req.body.headers.authorization.split(' ')[1];
+            token = req.headers.authorization.split(' ')[1];
             const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
             req.user = await User.findById(decodedToken.id).select('-password');
             next();
