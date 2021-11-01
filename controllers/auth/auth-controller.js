@@ -1,22 +1,22 @@
 const User = require('../../models/UserSchema'),
-    {genJWTToken} = require('../../utils/genJWT'),
+    { genJWTToken } = require('../../utils/genJWT'),
     serverInfo = require('../../utils/constants'),
-    {v4: uuidv4} = require('uuid'),
+    { v4: uuidv4 } = require('uuid'),
     moment = require('moment'),
-    {sendSignupMessages, sendPasswordResetEmail, sendUserUpdatedEmail, sendUserAccountDeleteEmail} = require('../../email/messages');
+    { sendSignupMessages, sendPasswordResetEmail, sendUserUpdatedEmail, sendUserAccountDeleteEmail } = require('../../email/messages');
 
 exports.postRegisterNewUser = async (req, res) => {
     // Check for correct HTTP method
-    if (req.method !== serverInfo.route.METHOD_POST) return res.status(400).json({msg: serverInfo.error.INVALID_REQUEST});
+    if (req.method !== serverInfo.route.METHOD_POST) return res.status(400).json({ msg: serverInfo.error.INVALID_REQUEST });
 
-    const {name, username, email, password} = req.body.user;
+    const { name, username, email, password } = req.body.user;
     try {
         // Check for existing user
-        let existingUser = await User.findOne({email});
-        if (existingUser) return res.status(400).json({msg: serverInfo.user.USER_ALREADY_EXISTS});
+        let existingUser = await User.findOne({ email });
+        if (existingUser) return res.status(400).json({ msg: serverInfo.user.USER_ALREADY_EXISTS });
 
         // Check password length
-        if (password.length < 6 || password.length > 20) return res.status(400).json({msg: serverInfo.user.PASSWORD_ERROR});
+        if (password.length < 6 || password.length > 20) return res.status(400).json({ msg: serverInfo.user.PASSWORD_ERROR });
 
         // Create new user
         const newUser = await User.create({
@@ -26,13 +26,13 @@ exports.postRegisterNewUser = async (req, res) => {
             password,
         })
         await newUser.save();
-        await sendSignupMessages(newUser);
+        // await sendSignupMessages(newUser);
 
         // Send back user information
         if (newUser) {
             return res.status(201).json({
                 msg: 'User created',
-                user: {   
+                user: {
                     _id: newUser._id,
                     name: newUser.name,
                     username: newUser.username,
@@ -43,27 +43,27 @@ exports.postRegisterNewUser = async (req, res) => {
         }
 
     } catch (err) {
-        res.status(500).json({msg: err})
+        res.status(500).json({ msg: err })
     }
 }
 
 exports.postUserLoginUser = async (req, res) => {
     // Check for correct HTTP method
-    if (req.method !== serverInfo.route.METHOD_POST) return res.status(400).json({msg: serverInfo.error.INVALID_REQUEST});
+    if (req.method !== serverInfo.route.METHOD_POST) return res.status(400).json({ msg: serverInfo.error.INVALID_REQUEST });
 
     try {
         // Receive incoming data
-        const {username, password} = req.body.userLoginInfo;
-
+        const { username, password } = req.body.userLoginInfo;
         // Check for username and password are not empty
-        if (!username && !password) return res.status(400).json({msg: serverInfo.user.EMPTY_USERNAME_PASSWORD});
+        if (!username && !password) return res.status(400).json({ msg: serverInfo.user.EMPTY_USERNAME_PASSWORD });
 
         // Check if user exists
-        let user = await User.findOne({username}).select('password email name membership');
-        if (!user) return res.status(400).json({msg: serverInfo.user.NO_USER_FOUND});
+        let user = await User.findOne({ username }).select('password email name membership');
+        if (!user) return res.status(400).json({ msg: serverInfo.user.NO_USER_FOUND });
 
         // Compare user password with password passed in and pass the user to frontend if found
         let loginUser = await user.comparePassword(password);
+        console.log(loginUser);
         if (loginUser) {
             return res.status(200).json({
                 _id: user._id,
@@ -73,29 +73,29 @@ exports.postUserLoginUser = async (req, res) => {
                 token: genJWTToken(user._id)
             })
         } else {
-            return res.status(400).json({msg: serverInfo.user.NO_USER_FOUND})
+            return res.status(400).json({ msg: serverInfo.user.NO_USER_FOUND })
         }
     } catch (err) {
         // Send message to frontend
-        res.status(500).json({msg: err})
+        res.status(500).json({ msg: err })
     }
 }
 
 exports.getResetUserPassword = async (req, res) => {
     // Check for correct HTTP method
-    if (req.method !== serverInfo.route.METHOD_GET) return res.status(400).json({msg: serverInfo.user.INVALID_REQUEST});
+    if (req.method !== serverInfo.route.METHOD_GET) return res.status(400).json({ msg: serverInfo.user.INVALID_REQUEST });
 
     try {
         // Validate email passed in
         let validEmailAddress = await validateEmail(req.params.email);
-        if (!validEmailAddress) return res.status(400).json({msg: serverInfo.user.EMAIL_NOT_VALID});
+        if (!validEmailAddress) return res.status(400).json({ msg: serverInfo.user.EMAIL_NOT_VALID });
 
         // Check if user exist with passed in email
-        const user = await User.findOne({email: req.params.email});
-        if (!user) return res.status(400).json({msg: serverInfo.user.NO_USER_FOUND});
+        const user = await User.findOne({ email: req.params.email });
+        if (!user) return res.status(400).json({ msg: serverInfo.user.NO_USER_FOUND });
 
         // Check if they have already requested a password reset. If not set user password reset code and validation time.
-        if (moment(user.resetPassword.validTime).isAfter()) return res.status(400).json({msg: serverInfo.user.PASSWORD_RESET_ACTIVE});
+        if (moment(user.resetPassword.validTime).isAfter()) return res.status(400).json({ msg: serverInfo.user.PASSWORD_RESET_ACTIVE });
         else {
             user.resetPassword.resetCode = uuidv4();
             user.resetPassword.validTime = moment().add(15, 'm').format();
@@ -103,7 +103,7 @@ exports.getResetUserPassword = async (req, res) => {
 
             // Send reset email and notify user it was sent
             await sendPasswordResetEmail(user);
-            return res.status(200).json({msg: serverInfo.user.PASSWORD_RESET_CONFIRMED});
+            return res.status(200).json({ msg: serverInfo.user.PASSWORD_RESET_CONFIRMED });
         }
     } catch (err) {
         console.log(err)
@@ -112,15 +112,15 @@ exports.getResetUserPassword = async (req, res) => {
 
 exports.putUserPasswordResetUpdate = async (req, res) => {
     // Check for correct HTTP method
-    if (req.method !== serverInfo.route.METHOD_PUT) return res.status(400).json({msg: serverInfo.user.INVALID_REQUEST});
+    if (req.method !== serverInfo.route.METHOD_PUT) return res.status(400).json({ msg: serverInfo.user.INVALID_REQUEST });
 
     // Set variable to save password coming in
     const password = req.body.password;
 
     try {
         // Check for user by password reset code
-        const user = await User.findOne({'resetPassword.resetCode': req.params.id}).select('+password');
-        if (!user) return res.status(400).json({msg: serverInfo.user.INVALID_TOKEN});
+        const user = await User.findOne({ 'resetPassword.resetCode': req.params.id }).select('+password');
+        if (!user) return res.status(400).json({ msg: serverInfo.user.INVALID_TOKEN });
 
         // Set new user password
         user.password = password;
@@ -129,7 +129,7 @@ exports.putUserPasswordResetUpdate = async (req, res) => {
 
         await user.save();
 
-        return res.status(200).json({msg: serverInfo.user.PASSWORD_UPDATED});
+        return res.status(200).json({ msg: serverInfo.user.PASSWORD_UPDATED });
     } catch (err) {
         console.log(err)
     }
@@ -137,7 +137,7 @@ exports.putUserPasswordResetUpdate = async (req, res) => {
 
 exports.putUpdateUserInformation = async (req, res) => {
     // Check for correct HTTP method
-    if (req.method !== serverInfo.route.METHOD_PUT) return res.status(400).json({msg: serverInfo.user.INVALID_REQUEST});
+    if (req.method !== serverInfo.route.METHOD_PUT) return res.status(400).json({ msg: serverInfo.user.INVALID_REQUEST });
 
     let id = req.params.id;
 
@@ -152,39 +152,39 @@ exports.putUpdateUserInformation = async (req, res) => {
         };
 
         // Check if user exists
-        let updatedUserInfo = await User.findOneAndUpdate({_id: id}, updateQuery, options);
-        if (!updatedUserInfo) return res.status(400).json({msg: serverInfo.user.USER_UPDATE_ERROR});
+        let updatedUserInfo = await User.findOneAndUpdate({ _id: id }, updateQuery, options);
+        if (!updatedUserInfo) return res.status(400).json({ msg: serverInfo.user.USER_UPDATE_ERROR });
 
         await sendUserUpdatedEmail(updatedUserInfo)
 
-        res.status(201).json({updatedUserInfo, msg: serverInfo.user.USER_SUCCESSFULLY_UPDATED});
+        res.status(201).json({ updatedUserInfo, msg: serverInfo.user.USER_SUCCESSFULLY_UPDATED });
 
     } catch (err) {
         // Send message to frontend
-        res.status(500).json({msg: err})
+        res.status(500).json({ msg: err })
     }
 }
 
 exports.deleteUserAccountInformation = async (req, res) => {
     // Check for correct HTTP method
-    if (req.method !== serverInfo.route.METHOD_DELETE) return res.status(400).json({msg: serverInfo.user.INVALID_REQUEST});
+    if (req.method !== serverInfo.route.METHOD_DELETE) return res.status(400).json({ msg: serverInfo.user.INVALID_REQUEST });
 
     let id = req.params.id;
 
     try {
         // Find user with id and delete
-        let deleteUserAccountInformation = await User.findByIdAndDelete({_id: id});
+        let deleteUserAccountInformation = await User.findByIdAndDelete({ _id: id });
         console.log(deleteUserAccountInformation)
-        if (!deleteUserAccountInformation) return res.status(400).json({msg: serverInfo.user.USER_DELETE_ERROR});
+        if (!deleteUserAccountInformation) return res.status(400).json({ msg: serverInfo.user.USER_DELETE_ERROR });
 
         await sendUserAccountDeleteEmail(deleteUserAccountInformation)
 
         // Send message to user on successful deletion
-        res.status(200).json({msg: serverInfo.user.USER_SUCCESSFULLY_DELETED});
+        res.status(200).json({ msg: serverInfo.user.USER_SUCCESSFULLY_DELETED });
 
     } catch (err) {
         // Send message to frontend
-        res.status(500).json({msg: err})
+        res.status(500).json({ msg: err })
     }
 }
 
