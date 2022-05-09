@@ -21,13 +21,13 @@ const importData = async () => {
         console.log('Fetching quotes')
         const result = await axios.get(process.env.FREE_QUOTES_API);
         console.log('Importing quotes')
-        await Quotes.insertMany(result.data)
+        await Quotes.insertMany(result.data, { ordered: false })
         console.log('Quotes Imported');
 
         console.log('Data import completed')
         process.exit();
     } catch (e) {
-        console.error(e.message)
+        console.error(e)
         process.exit(1)
     }
 }

@@ -23,14 +23,13 @@ exports.findUserQuote = async (req, res, next) => {
     }
 }
 
-exports.getAllQuotesFromDb = async (req, res, next) => {
+exports.getAllQuotesFromDb = async (req, res) => {
     try {
         const keyword = req.params.quoteId ? req.params.quoteId : {}
 
-        req.dbQuotes = await Quote.find({...keyword})
-        next()
+        let quotes = await Quote.find({...keyword});
+        res.json(quotes)
     } catch (err) {
         console.log(err)
-        next()
     }
 }
